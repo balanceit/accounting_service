@@ -12,7 +12,7 @@ var db *sql.DB // global variable to share it between main and the HTTP handler
 
 func Setup() error {
 	var err error
-	db, err = sql.Open("postgres", "user=root dbname=service_financial_development sslmode=disable host=localhost")
+	db, err = sql.Open("postgres", "user=root dbname=service_financial_development sslmode=require host=localhost")
 	if err != nil {
 		log.Fatal(err)
 	}
