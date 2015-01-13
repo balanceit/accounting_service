@@ -5,21 +5,35 @@ import (
 	"log"
 )
 
-func GetCurrencies() {
-	rows, err := db.Query("select currency_code from currencies")
+type Currency struct {
+	Id           string `json:"id"`
+	CurrencyCode string `json:"currency_code"`
+	Rounding     string `json:"rounding"`
+}
+
+func GetCurrencies() []Currency {
+	var rows, err = db.Query("select id, currency_code, rounding from currencies")
+
 	if err != nil {
 		log.Fatal(err)
 		fmt.Printf("\n")
 	}
 
+	defer rows.Close()
+
+	var currencies []Currency
+
 	for rows.Next() {
-		var currency_code string
-		if err := rows.Scan(&currency_code); err != nil {
+		var c Currency
+		if err := rows.Scan(&c.Id, &c.CurrencyCode, &c.Rounding); err != nil {
 			log.Fatal(err)
 		}
-		fmt.Printf("%s\n", currency_code)
+		fmt.Printf("%+v\n", c)
+		currencies = append(currencies, c)
 	}
+
 	if err := rows.Err(); err != nil {
 		log.Fatal(err)
 	}
+	return currencies
 }

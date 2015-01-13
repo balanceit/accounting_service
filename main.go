@@ -20,11 +20,13 @@ func main() {
 	if err != nil {
 		fmt.Println(err)
 	}
+
+	models.GetCurrencies()
+
 	r := mux.NewRouter()
 	r.HandleFunc("/", controllers.Index)
 
 	http.Handle("/", r)
 	http.ListenAndServe(":8080", nil)
 
-	models.GetCurrencies()
 }

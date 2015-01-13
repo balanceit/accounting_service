@@ -12,8 +12,8 @@ import (
 func Index(w http.ResponseWriter, r *http.Request) {
 	switch {
 	case r.Method == "GET":
-		models.GetCurrencies()
-		JSONResponse(w, "gotten", http.StatusOK)
+		currencies := models.GetCurrencies()
+		JSONResponse(w, currencies, http.StatusOK)
 	}
 }
 
