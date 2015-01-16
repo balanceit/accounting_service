@@ -175,26 +175,3 @@ func benchmarkOnTempTable(t *testing.B) {
 		}
 	}
 }
-
-//
-// def self.bench
-//   puts Currency.all.count
-//   n = 50000
-//   Benchmark.bm(7) do |x|
-//     x.report("currency all:") do
-//       Currency.all
-//     end
-//   end
-//
-// end
-//
-// def self.bench_2
-//   puts Currency.all.count
-//   t1 = Time.now
-//   50000.times do
-//     Currency.all
-//   end
-//   t2 = Time.now
-//   delta = t2 - t1
-//   puts delta
-// end

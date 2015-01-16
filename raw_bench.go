@@ -4,16 +4,19 @@ import (
 	"fmt"
 	"os"
 	"testing"
+	"time"
 
 	"github.com/jackc/pgx"
 )
 
 var conn *pgx.Conn
-var db *sql.DB
-var stmt *sql.Stmt
 
 func main() {
 	br := testing.Benchmark(benchmark)
+  nanoseconds := float64(br.T.Nanoseconds()) / float64(br.N)
+  milliseconds := nanoseconds / 1000000.0
+
+  fmt.Printf("%13.2f ns/op | %13.10f ms/op | %d Iterations\n", nanoseconds, milliseconds, br.N)
 	fmt.Println(br)
 }
 
@@ -22,9 +25,12 @@ func benchmark(t *testing.B) {
 	SetUp()
 	t.StartTimer()
 
+	start := time.Now()
 	for i := 0; i < t.N; i++ {
 		ListTasks()
 	}
+	elapsed := time.Since(start) / time.Duration(t.N)
+	fmt.Printf("running query %s\n", elapsed)
 }
 
 func SetUp() {
@@ -37,8 +43,11 @@ func SetUp() {
 }
 
 func ListTasks() error {
-	rows, _ := conn.Query("select id, currency_code from currencies")
-
+	rows, err := conn.Query("select id, currency_code from currencies")
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Unable to connection to database: %v\n", err)
+		os.Exit(1)
+	}
 	for rows.Next() {
 		var id string
 		var description string
@@ -48,7 +57,7 @@ func ListTasks() error {
 		}
 		// fmt.Printf("%s %s\n", id, description)
 	}
-	err := rows.Err()
+	err = rows.Err()
 	rows.Close()
 	return err
 }
@@ -60,7 +69,7 @@ func ExtractConfig() pgx.ConnConfig {
 	config.User = "root"
 
 	config.Password = "root"
-	config.Database = "service_financial_development"
+	config.Database = "bench_testing"
 
 	return config
 }
