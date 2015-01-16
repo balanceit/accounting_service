@@ -21,8 +21,6 @@ func main() {
 		fmt.Println(err)
 	}
 
-	models.GetCurrencies()
-
 	r := mux.NewRouter()
 	r.HandleFunc("/", controllers.Index)
 

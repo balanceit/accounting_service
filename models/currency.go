@@ -3,6 +3,10 @@ package models
 import (
 	"fmt"
 	"log"
+
+	_ "github.com/lib/pq"
+	// _ "github.com/jackc/pgx"
+	// _ "github.com/jackc/pgx/stdlib"
 )
 
 type Currency struct {
@@ -12,25 +16,24 @@ type Currency struct {
 }
 
 func GetCurrencies() []Currency {
-	var rows, err = db.Query("select id, currency_code, rounding from currencies")
 
+	var currencies []Currency
+	rows, err := stmt.Query()
 	if err != nil {
 		log.Fatal(err)
 		fmt.Printf("\n")
 	}
 
-	defer rows.Close()
-
-	var currencies []Currency
-
+	var c Currency
 	for rows.Next() {
-		var c Currency
 		if err := rows.Scan(&c.Id, &c.CurrencyCode, &c.Rounding); err != nil {
 			log.Fatal(err)
 		}
 		fmt.Printf("%+v\n", c)
 		currencies = append(currencies, c)
 	}
+
+	rows.Close() // important to close explictly and not wait for defer
 
 	if err := rows.Err(); err != nil {
 		log.Fatal(err)
