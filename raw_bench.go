@@ -30,7 +30,7 @@ func benchmark(t *testing.B) {
 		ListTasks()
 	}
 	elapsed := time.Since(start) / time.Duration(t.N)
-	fmt.Printf("running query %s\n", elapsed)
+	fmt.Printf("running query %s\n", elapsed.Millisecond())
 }
 
 func SetUp() {
